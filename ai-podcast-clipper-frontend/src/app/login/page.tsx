@@ -1,10 +1,19 @@
+"use server";
 import { Podcast } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
+import { redirect } from "next/navigation";
 import { LoginForm } from "~/components/login-form";
+import ShinyText from "~/components/ui/shinyText";
 
-export default function LoginPage() {
+import { auth } from "~/server/auth";
+
+export default async function LoginPage() {
+  const session = await auth();
+
+  if (session) {
+    redirect("/dashboard");
+  }
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -13,7 +22,12 @@ export default function LoginPage() {
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
               <Podcast className="size-4" />
             </div>
-            Podcast Clipper
+            <ShinyText
+              text="Podcast Clipper"
+              disabled={false}
+              speed={3}
+              className="font-bold"
+            />
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
@@ -30,10 +44,11 @@ export default function LoginPage() {
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="text-accent absolute inset-0 z-10 flex flex-col items-center justify-center">
+        <div className="text-accent absolute inset-0 z-10 ml-4 flex flex-col items-center justify-center px-20 text-center">
           <h1 className="text-[3vw] font-bold">Podcast Clipper</h1>
-          <p className="text-[1.5vw]">
-            Turn long podcast into clips by{" "}
+          <p className="text-[1.5vw] text-shadow-lg">
+            Turn long podcast into clips and gain 10x more interaction.
+            <br /> Developed by{" "}
             <a
               className="font-semibold"
               href="https://github.com/adityamandal-Developer"

@@ -9,12 +9,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert } from "./ui/alert";
 import { useState } from "react";
 import Link from "next/link";
-import { loginSchema, type LoginFormValues } from "~/schemas/auth";
+import { signupSchema, type SignupFormValues } from "~/schemas/auth";
+import { signUp } from "~/actions/auth";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export function LoginForm({
+export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
@@ -26,27 +27,38 @@ export function LoginForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: SignupFormValues) => {
     try {
       setIsSubmitting(true);
       setError(null);
 
-      const signupResult = await signIn("credentials", {
+      const result = await signUp(data);
+      if (!result.success) {
+        setError(result.error! || "Something went wrong");
+        toast.error(result.error! || "Something went wrong");
+        return;
+      }
+
+      const signInResult = await signIn("credentials", {
         email: data.email,
         password: data.password,
         redirect: false,
       });
 
-      if (signupResult?.error) {
-        setError("Invalid email or password, please try again");
-        toast.error("Invalid email or password, please try again");
+      if (signInResult?.error) {
+        setError(
+          "Account created but couldn't sign in automatically. please try again",
+        );
+        toast.error(
+          "Account created but couldn't sign in automatically. please login",
+        );
       } else {
         router.push("/dashboard");
-        toast.success("Logged in");
+        toast.success("logged in");
       }
     } catch {
       setError("Something went wrong");
@@ -63,9 +75,9 @@ export function LoginForm({
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <h1 className="text-2xl font-bold">Create a new account</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to login to your account
+          Enter your email below to create your account
         </p>
       </div>
       <div className="grid gap-6">
@@ -143,9 +155,9 @@ export function LoginForm({
         </Button>
       </div>
       <div className="text-center text-sm">
-        don&apos;t have an account?{" "}
-        <Link href="/signup" className="underline underline-offset-4">
-          Sign up
+        Already have an account?{" "}
+        <Link href="/login" className="underline underline-offset-4">
+          Sign in
         </Link>
       </div>
     </form>
