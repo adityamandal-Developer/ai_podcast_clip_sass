@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
     theme: {
         extend: {
             keyframes: {
@@ -14,3 +14,5 @@ module.exports = {
     },
     plugins: [],
 };
+
+export default config
