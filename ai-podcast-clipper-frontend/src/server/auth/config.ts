@@ -67,7 +67,7 @@ export const authConfig = {
 
         const ispasswordMatched = await comparePassword(
           password,
-          user.password!,
+          user.password,
         );
 
         if (!ispasswordMatched) {

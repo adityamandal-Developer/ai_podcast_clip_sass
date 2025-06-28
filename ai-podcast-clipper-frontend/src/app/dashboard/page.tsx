@@ -19,6 +19,9 @@ const DashboardPage = async () => {
         where: {
           uploaded: true,
         },
+        orderBy: {
+          createdAt: "desc",
+        },
         select: {
           id: true,
           s3Key: true,

@@ -16,6 +16,8 @@ import { generateUploadUrl } from "~/actions/s3";
 import { toast } from "sonner";
 import { processVideo } from "~/actions/generation";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import DisplayClips from "./display-clips";
 
 const UploadedFilesTable = dynamic(() => import("./uploaded-files-table"), {
   ssr: false,
@@ -35,8 +37,61 @@ type Props = {
 };
 
 const DashboardClient = ({ uploadedFiles, clips }: Props) => {
+  return (
+    <div className="mx-auto flex max-w-5xl flex-col space-y-6 px-4 py-8">
+      <div>
+        <h1 className="font-mono text-xl">
+          Upload Your podcast and get AI generated clips
+        </h1>
+      </div>
+      <Tabs defaultValue="upload">
+        <TabsList className="px-4 py-6">
+          <TabsTrigger className="p-4" value="upload">
+            Upload
+          </TabsTrigger>
+          <TabsTrigger className="p-4" value="my-clips">
+            Clips
+          </TabsTrigger>
+        </TabsList>
+
+        <Upload uploadedFiles={uploadedFiles} />
+        <ShowClips clip={clips} />
+      </Tabs>
+    </div>
+  );
+};
+
+export default DashboardClient;
+
+const ShowClips = ({ clip }: { clip: Clip[] }) => {
+  return (
+    <TabsContent value="my-clips">
+      <Card>
+        <CardHeader>
+          <CardTitle>My clips</CardTitle>
+          <CardDescription>
+            View your generated clips here, clip processing may take time
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DisplayClips clips={clip} />
+        </CardContent>
+      </Card>
+    </TabsContent>
+  );
+};
+
+const Upload = ({ uploadedFiles }: { uploadedFiles: Uploaded_file[] }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    router.refresh();
+    setTimeout(() => setRefreshing(false), 3000);
+  };
 
   const handleDrop = (acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
@@ -101,104 +156,98 @@ const DashboardClient = ({ uploadedFiles, clips }: Props) => {
   };
 
   console.log("uploading - ", uploading);
-
   return (
-    <div className="mx-auto flex max-w-5xl flex-col space-y-6 px-4 py-8">
-      <div>
-        <h1 className="font-mono text-xl">
-          Upload Your podcast and get AI generated clips
-        </h1>
-      </div>
-      <Tabs defaultValue="upload">
-        <TabsList className="px-4 py-6">
-          <TabsTrigger className="p-4" value="upload">
-            Upload
-          </TabsTrigger>
-          <TabsTrigger className="p-4" value="my-clips">
-            Clips
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="upload">
-          <Card>
-            <CardHeader>
-              <CardTitle>Upload your podcast</CardTitle>
-              <CardDescription>
-                Upload your podcast to generate clips
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Dropzone
-                dropZoneClassName=""
-                onDrop={handleDrop}
-                accept={{ "video/mp4": [".mp4"] }}
-                maxSize={500 * 1024 * 1024}
-                disabled={uploading}
-                maxFiles={1}
-              >
-                {(dropzone: DropzoneState) => (
-                  <>
-                    <div className="flex flex-col items-center justify-center gap-2 space-x-5 p-8">
-                      {uploading ? (
-                        <div className="flex flex-col items-center justify-center gap-2">
-                          <Loader2 className="h-8 w-8 animate-spin" />
-                          Your video is uploading, please wait, this may take a
-                          while
-                        </div>
-                      ) : (
-                        <>
-                          <UploadCloud />
-                          <p>
-                            Drag and drop your file here or click browse (upto
-                            500 mb of mp4 file)
-                          </p>
-                        </>
-                      )}
+    <TabsContent value="upload">
+      <Card>
+        <CardHeader>
+          <CardTitle>Upload your podcast</CardTitle>
+          <CardDescription>
+            Upload your podcast to generate clips
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Dropzone
+            dropZoneClassName=""
+            onDrop={handleDrop}
+            accept={{ "video/mp4": [".mp4"] }}
+            maxSize={500 * 1024 * 1024}
+            disabled={uploading}
+            maxFiles={1}
+          >
+            {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
+            {(dropzone: DropzoneState) => (
+              <>
+                <div className="flex flex-col items-center justify-center gap-2 space-x-5 p-8">
+                  {uploading ? (
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                      Your video is uploading, please wait, this may take a
+                      while
                     </div>
-                  </>
-                )}
-              </Dropzone>
-
-              <div className="mt-2 flex items-start justify-between">
-                <div>
-                  {files.length > 0 && (
-                    <div className="space-y-1 text-sm">
-                      <p className="font-medium">Selected file:</p>
-                      {files.map((file) => (
-                        <p key={file.name} className="text-muted-foreground">
-                          {file.name}
-                        </p>
-                      ))}
-                    </div>
+                  ) : (
+                    <>
+                      <UploadCloud />
+                      <p>
+                        Drag and drop your file here or click browse (upto 500
+                        mb of mp4 file)
+                      </p>
+                    </>
                   )}
                 </div>
-                <Button disabled={uploading} onClick={handleUpload}>
-                  {uploading ? (
-                    <>
-                      Uploading, this may take a while{" "}
-                      <Loader2 className="animate-spin" />
-                    </>
+              </>
+            )}
+          </Dropzone>
+
+          <div className="mt-2 mb-2 flex items-start justify-between border-b pb-4">
+            <div>
+              {files.length > 0 && (
+                <div className="space-y-1 text-sm">
+                  <p className="font-medium">Selected file:</p>
+                  {files.map((file) => (
+                    <p key={file.name} className="text-muted-foreground">
+                      {file.name}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+            <Button disabled={uploading} onClick={handleUpload}>
+              {uploading ? (
+                <>
+                  Uploading, this may take a while{" "}
+                  <Loader2 className="animate-spin" />
+                </>
+              ) : (
+                "Upload and generate clips"
+              )}
+            </Button>
+          </div>
+
+          {uploadedFiles.length > 0 && (
+            <div className="pt-10">
+              <div className="mb-2 flex items-center justify-between">
+                <CardTitle>Queue status</CardTitle>
+                <Button
+                  variant={"outline"}
+                  className=""
+                  disabled={refreshing}
+                  onClick={handleRefresh}
+                >
+                  {refreshing ? (
+                    <Loader2 className="animate-spin" />
                   ) : (
-                    "Upload and generate clips"
+                    "Refresh"
                   )}
                 </Button>
               </div>
 
-              {uploadedFiles.length > 0 && (
-                <div className="pt-5">
-                  <CardTitle>Queue status</CardTitle>
-                  <div className="radius min-h-[300px] overflow-auto">
-                    <UploadedFilesTable uploadedFiles={uploadedFiles} />
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="my-clips">Change your password here</TabsContent>
-      </Tabs>
-    </div>
+              <div className="radius max-h-[300px] overflow-auto">
+                <UploadedFilesTable uploadedFiles={uploadedFiles} />
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </TabsContent>
   );
 };
-
-export default DashboardClient;
