@@ -21,7 +21,17 @@ export const env = createEnv({
     AWS_REGION: z.string(),
 
     PROCESS_VIDEO_ENDPOINT: z.string(),
-    PROCESS_VIDEO_ENDPOINT_AUTH: z.string()
+    PROCESS_VIDEO_ENDPOINT_AUTH: z.string(),
+
+    STRIPE_SECRECT_KEY: z.string(),
+
+    STRIPE_STARTER_CREDITS_PACK: z.string(),
+    STRIPE_PRO_CREDITS_PACK: z.string(),
+    STRIPE_AGENCY_CREDITS_PACK: z.string(),
+
+    BASE_URL: z.string(),
+    STRIPE_WEBHOOK_SECRECT: z.string(),
+    STRIPE_SIGNING_SECRECT: z.string(),
   },
 
   /**
@@ -30,7 +40,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string()
   },
 
   /**
@@ -48,7 +58,18 @@ export const env = createEnv({
     AWS_REGION: process.env.AWS_REGION,
 
     PROCESS_VIDEO_ENDPOINT: process.env.PROCESS_VIDEO_ENDPOINT,
-    PROCESS_VIDEO_ENDPOINT_AUTH: process.env.PROCESS_VIDEO_ENDPOINT_AUTH
+    PROCESS_VIDEO_ENDPOINT_AUTH: process.env.PROCESS_VIDEO_ENDPOINT_AUTH,
+
+    STRIPE_SECRECT_KEY: process.env.STRIPE_SECRECT_KEY,
+
+    STRIPE_STARTER_CREDITS_PACK: process.env.STRIPE_STARTER_CREDITS_PACK,
+    STRIPE_PRO_CREDITS_PACK: process.env.STRIPE_PRO_CREDITS_PACK,
+    STRIPE_AGENCY_CREDITS_PACK: process.env.STRIPE_AGENCY_CREDITS_PACK,
+
+    BASE_URL: process.env.BASE_URL,
+    STRIPE_WEBHOOK_SECRECT: process.env.STRIPE_WEBHOOK_SECRECT,
+    STRIPE_SIGNING_SECRECT: process.env.STRIPE_SIGNING_SECRECT,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   },
 
   /**

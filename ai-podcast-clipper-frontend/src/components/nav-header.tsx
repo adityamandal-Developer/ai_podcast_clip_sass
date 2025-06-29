@@ -42,9 +42,9 @@ const NavHeader = ({ credits, email }: { credits: number; email: string }) => {
               <DropdownMenuTrigger asChild>
                 <Button
                   className="relative h-8 w-8 rounded-full p-0"
-                  variant={"secondary"}
+                  variant={"default"}
                 >
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="text-primary h-8 w-8">
                     <AvatarFallback>{email.charAt(0)}</AvatarFallback>
                   </Avatar>
                 </Button>

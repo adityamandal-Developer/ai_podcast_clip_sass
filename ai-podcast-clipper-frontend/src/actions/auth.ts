@@ -3,7 +3,8 @@
 import { hashPassword } from "~/lib/auth";
 import { signupSchema, type SignupFormValues } from "~/schemas/auth";
 import { db } from "~/server/db";
-// import Stripe from "stripe";
+import Stripe from "stripe";
+import { env } from "~/env";
 
 type signupResult = {
   success: boolean;
@@ -35,17 +36,19 @@ export async function signUp(data: SignupFormValues): Promise<signupResult> {
     }
 
     const hashedPassword = await hashPassword(password);
-    // const strip = new Stripe("// Todo : key");
 
-    // const stripCustomer = await strip.customers.create({
-    //   email: email.toLowerCase(),
-    // });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const strip = new Stripe(env.STRIPE_SECRECT_KEY);
+
+    const stripCustomer = await strip.customers.create({
+      email: email.toLowerCase(),
+    });
 
     await db.user.create({
       data: {
         email,
         password: hashedPassword,
-        // stripCustomId: stripCustomer.id,
+        stripCustomId: stripCustomer.id,
       },
     });
 
