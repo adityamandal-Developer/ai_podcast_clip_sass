@@ -3,17 +3,8 @@
  * for Docker builds.
  */
 import "./src/env.js";
-import path from "path";
 
 /** @type {import("next").NextConfig} */
-const config = {
-    webpack: (config) => {
-        config.resolve.alias = {
-            ...config.resolve.alias,
-            "~": path.resolve("./src"),
-        };
-        return config;
-    },
-};
+const config = {};
 
 export default config;
