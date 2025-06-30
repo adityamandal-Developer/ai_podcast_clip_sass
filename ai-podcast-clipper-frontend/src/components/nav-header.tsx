@@ -14,20 +14,14 @@ import {
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { signOut } from "next-auth/react";
 import { toast } from "sonner";
-import ShinyText from "./ui/shinyText";
+import AppLogo from "./app-logo";
 
 const NavHeader = ({ credits, email }: { credits: number; email: string }) => {
   return (
     <header className="bg-background sticky top-0 z-10 flex justify-center border-b">
       <div className="container flex h-16 items-center justify-between px-4 py-2">
         <Link href={"/dashboard"} className="flex items-center gap-2">
-          <ShinyText
-            text="PODCAST CLIPPER"
-            speed={3}
-            disabled={false}
-            className="font-semibold"
-            element="h1"
-          />
+          <AppLogo />
         </Link>
 
         <div className="flex items-center gap-4">
