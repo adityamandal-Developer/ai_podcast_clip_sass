@@ -1,5 +1,5 @@
-# 🎙️ AI Podcast Clipper Backend
-
+# 🎙️ AI Podcast Clipper Backend & Web -
+# Backend
 A powerful Python backend service that automatically generates vertical video clips from podcast content using AI. Built with Modal for serverless deployment, WhisperX for transcription, and Google Gemini for intelligent moment identification.
 
 ## ✨ Features
@@ -405,7 +405,7 @@ modal deploy main.py
 Built with ❤️ using Modal, Python, and cutting-edge AI technologies.
 
 
-# 🎙️ AI PodClip Web
+# 🎙️ WEB
 
 A modern web application for AI-powered podcast clipping and management. Built with Next.js 15, TypeScript, and a robust tech stack for seamless audio content processing.
 
